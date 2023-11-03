@@ -1,4 +1,5 @@
 using Airport.Measure.Domain.Entities;
+using Airport.Measure.Domain.Entities.Locations;
 
 namespace Airport.Measure.Domain.Services;
 

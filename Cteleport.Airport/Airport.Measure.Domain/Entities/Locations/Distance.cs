@@ -1,4 +1,4 @@
-namespace Airport.Measure.Domain.Entities;
+namespace Airport.Measure.Domain.Entities.Locations;
 
 public struct Distance
 {

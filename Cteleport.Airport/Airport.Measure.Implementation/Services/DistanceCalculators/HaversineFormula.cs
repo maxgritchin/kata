@@ -1,4 +1,4 @@
-using Airport.Measure.Domain.Entities;
+using Airport.Measure.Domain.Entities.Locations;
 using Airport.Measure.Domain.Services;
 
 namespace Airport.Measure.Implementation.Services.DistanceCalculators;
