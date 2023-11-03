@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Services" />
+      <ProjectReference Include="..\Airport.Measure.Domain\Airport.Measure.Domain.csproj" />
     </ItemGroup>
 
 </Project>
