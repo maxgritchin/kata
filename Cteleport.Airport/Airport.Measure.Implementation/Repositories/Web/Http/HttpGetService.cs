@@ -11,18 +11,18 @@ public class HttpGetService: IHttpGet
     /// .ctor
     /// </summary>
     /// <param name="baseUrl">Base URL</param>
-    public HttpGetService(string baseUrl)
-    {
-        // validate
-        if (string.IsNullOrWhiteSpace(baseUrl))
-            throw new AggregateException("Base URL for IATA repository cannot be empty");
-        
-        // init
-        if (!baseUrl.EndsWith("/"))
-            baseUrl += "/";
-        
-        baseUri = new Uri(baseUrl);
-    }
+        public HttpGetService(string baseUrl)
+        {
+            // validate
+            if (string.IsNullOrWhiteSpace(baseUrl))
+                throw new AggregateException("Base URL for IATA repository cannot be empty");
+            
+            // init
+            if (!baseUrl.EndsWith("/"))
+                baseUrl += "/";
+            
+            baseUri = new Uri(baseUrl);
+        }
     
     #endregion
     

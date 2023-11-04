@@ -19,4 +19,9 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Airport.Measure.Domain\Airport.Measure.Domain.csproj" />
+      <ProjectReference Include="..\Airport.Measure.Implementation\Airport.Measure.Implementation.csproj" />
+    </ItemGroup>
+
 </Project>
