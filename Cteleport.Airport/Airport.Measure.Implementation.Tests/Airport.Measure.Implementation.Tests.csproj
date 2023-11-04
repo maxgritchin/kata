@@ -16,4 +16,9 @@
         <PackageReference Include="coverlet.collector" Version="3.1.2" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Airport.Measure.Domain\Airport.Measure.Domain.csproj" />
+      <ProjectReference Include="..\Airport.Measure.Implementation\Airport.Measure.Implementation.csproj" />
+    </ItemGroup>
+
 </Project>

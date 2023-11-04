@@ -2,10 +2,10 @@ namespace Airport.Measure.Domain.Entities.Locations;
 
 public struct Distance
 {
-    private readonly double _kilometers;
+    public int Miles { get; }
     
-    public Distance(double kilometers)
+    public Distance(double miles)
     {
-        _kilometers = kilometers;
+        Miles = (int)miles;
     }
 }

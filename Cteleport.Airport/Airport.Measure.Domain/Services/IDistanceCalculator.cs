@@ -14,5 +14,5 @@ public interface IDistanceCalculator
     /// <param name="form">First location point</param>
     /// <param name="to">Second location point</param>
     /// <returns></returns>
-    Distance Calculate(LocationPoint form, LocationPoint to);
+    Distance Calculate(LocationPoint from, LocationPoint to);
 }
