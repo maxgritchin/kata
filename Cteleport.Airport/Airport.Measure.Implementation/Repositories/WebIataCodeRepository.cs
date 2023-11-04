@@ -1,7 +1,9 @@
 using Airport.Measure.Domain.Entities.Codes;
 using Airport.Measure.Domain.Entities.Locations;
 using Airport.Measure.Domain.Repositories;
+using Airport.Measure.Implementation.Exceptions;
 using Airport.Measure.Implementation.Repositories.Web;
+using Airport.Measure.Implementation.Repositories.Web.Json.Exceptions;
 
 namespace Airport.Measure.Implementation.Repositories;
 
@@ -36,7 +38,14 @@ public class WebIataCodeRepository: IAirportCodesRepository
         var response = await _http.GetAsync(code.Value);
 
         // parse
-        return _json.GetLocationFromJson(response);
+        try
+        {
+            return _json.GetLocationFromJson(response);
+        }
+        catch (JsonParserException ex)
+        {
+            throw new FailedToGetLocationForIataCodeException($"{code.Value}: {ex.Message}", ex);
+        }
     }
     
     #endregion

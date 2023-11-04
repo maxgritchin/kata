@@ -5,21 +5,21 @@ namespace Airport.Measure.Implementation.Exceptions;
 /// <summary>
 /// Invalid URL parameter
 /// </summary>
-public class InvalidUrlParameter: Exception
+public class InvalidUrlParameterException: Exception
 {
-    public InvalidUrlParameter()
+    public InvalidUrlParameterException()
     {
     }
 
-    protected InvalidUrlParameter(SerializationInfo info, StreamingContext context) : base(info, context)
+    protected InvalidUrlParameterException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }
 
-    public InvalidUrlParameter(string? message) : base(message)
+    public InvalidUrlParameterException(string? message) : base(message)
     {
     }
 
-    public InvalidUrlParameter(string? message, Exception? innerException) : base(message, innerException)
+    public InvalidUrlParameterException(string? message, Exception? innerException) : base(message, innerException)
     {
     }
 }

@@ -1,6 +1,8 @@
 using Airport.Measure.Domain.Entities.Codes;
+using Airport.Measure.Domain.Entities.Locations;
 using Airport.Measure.Domain.Repositories;
 using Airport.Measure.Domain.Services;
+using Airport.Measure.Implementation.Exceptions;
 using Airport.Measure.Implementation.Services.Validators;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
@@ -36,14 +38,30 @@ public class DistanceCalculatorController: ControllerBase
     
     #region Private
 
-    private BadRequestObjectResult? ValidateIataCode(string code, string name)
-    {
-        if (!_iataCodeValidator.IsValidIataCode(code))
-            return BadRequest($"Invalid '{name}' parameter. It should be a valid 3-letter IATA code.");
+    private BadRequestObjectResult? ValidateIataCode(string code, string name) =>
+        !_iataCodeValidator.IsValidIataCode(code) 
+            ? BadRequest($"Invalid '{name}' parameter. It should be a valid 3-letter IATA code.") 
+            : null;
 
-        return null;
+    private async Task<ActionResult<double>> CalculateDistanceInMilesAsync(IataCode from, IataCode to)
+    {
+        try
+        {
+            var f = await _repository.GetLocationAsync(from);
+            var t = await _repository.GetLocationAsync(to);
+
+            // calculate distance
+            var distance = _calculator.Calculate(f.Value, t.Value);
+
+            // return result
+            return Ok(new { DistanceInMiles = distance.Miles });
+        }
+        catch (FailedToGetLocationForIataCodeException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
-    
+
     #endregion
     
     /// <summary>
@@ -67,14 +85,7 @@ public class DistanceCalculatorController: ControllerBase
         if (validationResult != null)
             return validationResult;
         
-        // read repository for locations
-        var from = await _repository.GetLocationAsync(airportFrom);
-        var to = await _repository.GetLocationAsync(airportTo);
-        
-        // calculate distance
-        var distance = _calculator.Calculate(from.Value, to.Value);
-        
-        // return result
-        return Ok(new {DistanceInMiles = distance.Miles});
+        // calculate
+        return await CalculateDistanceInMilesAsync(airportFrom, airportTo);
     }
 }
