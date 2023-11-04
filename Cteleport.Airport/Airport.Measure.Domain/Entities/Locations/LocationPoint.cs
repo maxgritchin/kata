@@ -13,4 +13,23 @@ public struct LocationPoint
         Longitude = lon;
         Latitude = lat;
     }
+    
+    #region Equity
+    
+    private sealed class longitudeLatitudeEqualityComparer : IEqualityComparer<LocationPoint>
+    {
+        public bool Equals(LocationPoint x, LocationPoint y)
+        {
+            return x.Longitude.Equals(y.Longitude) && x.Latitude.Equals(y.Latitude);
+        }
+
+        public int GetHashCode(LocationPoint obj)
+        {
+            return HashCode.Combine(obj.Longitude, obj.Latitude);
+        }
+    }
+
+    public static IEqualityComparer<LocationPoint> LongitudeLatitudeComparer { get; } = new longitudeLatitudeEqualityComparer();
+    
+    #endregion
 }
