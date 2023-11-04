@@ -33,7 +33,7 @@ public class WebIataCodeRepository: IAirportCodesRepository
             throw new ArgumentNullException(nameof(code));
         
         // make a request 
-        var response = await _http.Get(code.Value);
+        var response = await _http.GetAsync(code.Value);
 
         // parse
         return _json.GetLocationFromJson(response);

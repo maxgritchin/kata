@@ -31,7 +31,7 @@ public class WebIataCodeRepositoryTests
             // arrange
             var httpMock = new Mock<IHttpGet>();
             httpMock
-                .Setup(x => x.Get(It.IsAny<string>()))
+                .Setup(x => x.GetAsync(It.IsAny<string>()))
                 .ReturnsAsync("{}");
 
             var expected = new LocationPoint(12.356, 34.78);

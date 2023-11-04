@@ -10,5 +10,5 @@ public interface IHttpGet
     /// </summary>
     /// <param name="code">IATA code</param>
     /// <returns>Response from GET operation</returns>
-    public Task<string> Get(string code);
+    public Task<string?> GetAsync(string code);
 }
