@@ -22,7 +22,7 @@ public class WebIataCodeRepositoryTests
             var repo = new WebIataCodeRepository(httpMock.Object, jsonMock.Object);
 
             // assert
-            Assert.ThrowsAsync<ArgumentNullException>(() => repo.GetLocation(null));
+            Assert.ThrowsAsync<ArgumentNullException>(() => repo.GetLocationAsync(null));
         }
 
         [Test]
@@ -43,7 +43,7 @@ public class WebIataCodeRepositoryTests
             var repo = new WebIataCodeRepository(httpMock.Object, jsonMock.Object);
 
             // act
-            var location = await repo.GetLocation(new IataCode("AMS"));
+            var location = await repo.GetLocationAsync(new IataCode("AMS"));
             
             // assert
             Assert.That(location, Is.EqualTo(expected));

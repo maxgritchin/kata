@@ -13,5 +13,5 @@ public interface IAirportCodesRepository
      /// </summary>
      /// <param name="code">IATA code</param>
      /// <returns></returns>
-     Task<LocationPoint> GetLocation(IataCode code);
+     Task<LocationPoint?> GetLocationAsync(IataCode code);
 }

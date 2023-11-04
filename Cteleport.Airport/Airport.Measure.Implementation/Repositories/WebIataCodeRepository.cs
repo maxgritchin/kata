@@ -1,8 +1,6 @@
 using Airport.Measure.Domain.Entities.Codes;
 using Airport.Measure.Domain.Entities.Locations;
 using Airport.Measure.Domain.Repositories;
-using Airport.Measure.Implementation.Exceptions;
-using Airport.Measure.Implementation.Helpers;
 using Airport.Measure.Implementation.Repositories.Web;
 
 namespace Airport.Measure.Implementation.Repositories;
@@ -24,12 +22,11 @@ public class WebIataCodeRepository: IAirportCodesRepository
     private readonly IHttpGet _http;
     private readonly IJsonParser _json;
     
-        
     #endregion
     
     #region IAirportCodesRepository
     
-    public async Task<LocationPoint> GetLocation(IataCode code)
+    public async Task<LocationPoint?> GetLocationAsync(IataCode code)
     {
         // validate
         if (code == null)
