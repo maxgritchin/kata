@@ -50,6 +50,26 @@ public static class ApplicationServiceCollectionExrensions
     }
 
     /// <summary>
+    /// Add Redis cache for the IATA code repository
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/></param>
+    /// <param name="connectionString">Redis connection string</param>
+    /// <exception cref="ArgumentException">Throw when cannot find the base <see cref="IAirportCodesRepository"/></exception>
+    public static IServiceCollection AddRedisCacheForIataCodeRepository(this IServiceCollection services, string connectionString)
+    {
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = connectionString;
+            options.InstanceName = "GamesCatalog_";
+        });
+        
+        services.AddSingleton<IRepositoryCache, RedisRepositoryCache>();
+        services.Decorate<IAirportCodesRepository, CachingIataCodeRepository>();
+
+        return services;
+    }
+
+    /// <summary>
     /// Add IATA code operations
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/></param>

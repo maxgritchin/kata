@@ -6,7 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 // ADD SERVICES
 builder.Services.AddIataCodeOperationsServices();
 builder.Services.AddWebIataCodeRepository(builder.Configuration["Repository:Url"]);
-builder.Services.AddInMemoryCacheForIataCodeRepository();
+//builder.Services.AddInMemoryCacheForIataCodeRepository();
+builder.Services.AddRedisCacheForIataCodeRepository(builder.Configuration.GetConnectionString("Redis"));
 //
 
 // HELPERS 

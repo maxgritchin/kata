@@ -49,6 +49,11 @@ public class WebIataCodeRepository: IAirportCodesRepository
         
         // make a request 
         var response = await _http.GetAsync(code.Value);
+        if (string.IsNullOrWhiteSpace(response))
+        {
+            _logger.LogWarning("Response from Web for '{IataCode}' is empty", code.Value);
+            return null;
+        }
 
         // parse
         try

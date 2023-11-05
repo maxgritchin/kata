@@ -38,9 +38,9 @@ public class CteleportIataJsonParser: IJsonParser
     
     private class LocationDataDto
     {
-        public string Type { get; set; }
-        public string Detail { get; set; }
-        public LocationDto Location { get; set; }
+        public string? Type { get; set; }
+        public string? Detail { get; set; }
+        public LocationDto? Location { get; set; }
     }
     
     #endregion
@@ -65,7 +65,7 @@ public class CteleportIataJsonParser: IJsonParser
         {
             PropertyNameCaseInsensitive = true
         });
-        if (obj == null)
+        if (obj?.Location == null)
             throw new FailedJsonParsingException("Failed to parse JSON for IATA code. Result is null.");
         
         // check if airport found 
