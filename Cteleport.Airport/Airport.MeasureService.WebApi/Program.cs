@@ -13,7 +13,10 @@ builder.Services.AddRedisCacheForIataCodeRepository(builder.Configuration.GetCon
 // HELPERS 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.EnableAnnotations();
+});
 //
 
 // API versioning

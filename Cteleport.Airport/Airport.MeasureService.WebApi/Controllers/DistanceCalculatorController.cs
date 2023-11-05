@@ -1,11 +1,13 @@
+using System.ComponentModel.DataAnnotations;
 using Airport.Measure.Domain.Entities.Codes;
 using Airport.Measure.Domain.Entities.Locations;
 using Airport.Measure.Domain.Repositories;
 using Airport.Measure.Domain.Services;
 using Airport.Measure.Implementation.Exceptions;
-using Airport.Measure.Implementation.Services.Validators;
+using Airport.MeasureService.WebApi.Extensions;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Airport.MeasureService.WebApi.Controllers;
 
@@ -46,7 +48,7 @@ public class DistanceCalculatorController: ControllerBase
             ? BadRequest($"Invalid '{name}' parameter. It should be a valid 3-letter IATA code.") 
             : null;
 
-    private async Task<ActionResult<double>> CalculateDistanceInMilesAsync(IataCode from, IataCode to)
+    private async Task<ActionResult<double>> CalculateDistanceInMilesAsync(IataCode from, IataCode to, Direction direction)
     {
         try
         {
@@ -54,7 +56,7 @@ public class DistanceCalculatorController: ControllerBase
             var t = await _repository.GetLocationAsync(to);
 
             // calculate distance
-            var distance = _calculator.Calculate(f.Value, t.Value);
+            var distance = _calculator.Calculate(f.Value, t.Value, direction);
 
             // return result
             _logger.LogInformation("Calculated distance in miles: {Distance}", distance.Miles);
@@ -73,31 +75,55 @@ public class DistanceCalculatorController: ControllerBase
     }
 
     #endregion
-    
+
     /// <summary>
     /// Calculate the distance between two airports using their IATA codes.
     /// </summary>
-    /// <param name="fromIataCode">The IATA code of the departure airport.</param>
-    /// <param name="toIataCode">The IATA code of the destination airport.</param>
+    /// <param name="from">The IATA code of the departure airport.</param>
+    /// <param name="to">The IATA code of the destination airport.</param>
+    /// <param name="direction">Direction to calculate</param>
     /// <returns>The distance in miles between the two airports.</returns>
     [HttpGet("calculate"), MapToApiVersion(1.0)]
-    public async Task<ActionResult<double>> CalculateDistanceBetweenAirports([FromQuery] string fromIataCode, [FromQuery] string toIataCode)
+    [SwaggerOperation(
+        Summary = "Calculate distance between two airports.",
+        Description = "Calculates the distance between two airports using their 3-letter IATA codes.",
+        OperationId = "CalculateDistanceBetweenAirports",
+        Tags = new[] { "Airport Distance" }
+    )]
+    public async Task<ActionResult<double>> CalculateDistanceBetweenAirports(
+        [FromQuery] [Required] string from, 
+        [FromQuery] [Required] string to,
+        [FromQuery] [Required] string direction)
     {
-        _logger.LogInformation("Calculate distance between '{FromIataCode}' and '{ToIataCode}'", fromIataCode, toIataCode);
+        _logger.LogInformation("Calculate distance between '{FromIataCode}' and '{ToIataCode}'", from, to);
+
+        try
+        {
+            // parse input parameters 
+            var airportFrom = new IataCode(from);
+            var airportTo = new IataCode(to);
+            var directionToCalculate = direction.ToDirection();
         
-        // codes
-        var airportFrom = new IataCode(fromIataCode);
-        var airportTo = new IataCode(toIataCode);
+            // validate codes 
+            var validationResult =
+                ValidateIataCode(airportFrom.Value, nameof(from)) ??
+                ValidateIataCode(airportTo.Value, nameof(to));
         
-        // validate codes 
-        var validationResult =
-            ValidateIataCode(airportFrom.Value, nameof(fromIataCode)) ??
-            ValidateIataCode(airportTo.Value, nameof(toIataCode));
+            if (validationResult != null)
+                return validationResult;
         
-        if (validationResult != null)
-            return validationResult;
-        
-        // calculate
-        return await CalculateDistanceInMilesAsync(airportFrom, airportTo);
+            // calculate
+            return await CalculateDistanceInMilesAsync(airportFrom, airportTo, directionToCalculate);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError("Exception of parsing parameters: {Ex}", ex.ToString());
+            return BadRequest($"Ivalid input parameters: {ex.Message}");
+        }
+        catch(Exception ex)
+        {
+            _logger.LogCritical(ex.ToString());
+            return StatusCode(500, "Internal Server Error");
+        }
     }
 }

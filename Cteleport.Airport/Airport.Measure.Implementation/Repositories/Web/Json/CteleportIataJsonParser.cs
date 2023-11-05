@@ -65,12 +65,15 @@ public class CteleportIataJsonParser: IJsonParser
         {
             PropertyNameCaseInsensitive = true
         });
-        if (obj?.Location == null)
-            throw new FailedJsonParsingException("Failed to parse JSON for IATA code. Result is null.");
-        
+
         // check if airport found 
         if (obj.Type == AIRPORT_TYPE)
+        {
+            if (obj?.Location == null)
+                throw new FailedJsonParsingException("Failed to parse JSON for IATA code. Result is null.");
+            
             return new LocationPoint(obj.Location.Lon, obj.Location.Lat);
+        }
 
         // no location
         if (obj.Type == null)
