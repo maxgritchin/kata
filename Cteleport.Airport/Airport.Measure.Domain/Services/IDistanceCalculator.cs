@@ -1,4 +1,3 @@
-using Airport.Measure.Domain.Entities;
 using Airport.Measure.Domain.Entities.Locations;
 
 namespace Airport.Measure.Domain.Services;
@@ -13,7 +12,6 @@ public interface IDistanceCalculator
     /// </summary>
     /// <param name="from">First location point</param>
     /// <param name="to">Second location point</param>
-    /// <param name="direction">Direction to calculate distance</param>
     /// <returns></returns>
-    Distance Calculate(LocationPoint from, LocationPoint to, Direction direction);
+    Distance Calculate(LocationPoint from, LocationPoint to);
 }

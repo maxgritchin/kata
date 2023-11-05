@@ -14,7 +14,7 @@ public class HaversineFormulaTests
         var amsLocation = new LocationPoint(4.763385, 52.309069);
         
         // act 
-        var distance = new HaversineFormula().Calculate(dmeLocation, amsLocation, Direction.West);
+        var distance = new HaversineFormula().Calculate(dmeLocation, amsLocation);
 
         // assert 
         Assert.That(distance.Miles, Is.EqualTo(1355));
