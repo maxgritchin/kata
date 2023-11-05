@@ -1,0 +1,34 @@
+version: '3.7'
+
+services:
+  webapi1:
+    build:
+      context: .
+      dockerfile: ./Airport.MeasureService.WebApi/Dockerfile
+    ports:
+      - "8081:80"
+    networks:
+      - cteleport
+    depends_on:
+      - redis
+
+  # webapi2:
+  #   build:
+  #     context: .
+  #     dockerfile: ./Airport.MeasureService.WebApi/Dockerfile
+  #   ports:
+  #     - "8082:80"
+  #   networks:
+  #     - cteleport
+  #   depends_on:
+  #     - redis
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - cteleport
+
+networks:
+  cteleport:

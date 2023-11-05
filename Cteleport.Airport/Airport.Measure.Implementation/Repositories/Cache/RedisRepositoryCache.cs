@@ -14,9 +14,9 @@ public class RedisRepositoryCache: IRepositoryCache
 {
     #region .ctor
 
-    public RedisRepositoryCache(IDistributedCache cache): this(cache, NullLogger<InMemoryRepositoryCache>.Instance) {}
+    public RedisRepositoryCache(IDistributedCache cache): this(cache, NullLogger<RedisRepositoryCache>.Instance) {}
     
-    public RedisRepositoryCache(IDistributedCache cache, ILogger<InMemoryRepositoryCache> logger)
+    public RedisRepositoryCache(IDistributedCache cache, ILogger<RedisRepositoryCache> logger)
     {
         _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         _logger = logger;
@@ -28,7 +28,7 @@ public class RedisRepositoryCache: IRepositoryCache
     
     private readonly IDictionary<string, LocationPoint> _dict = new Dictionary<string, LocationPoint>();
     private readonly IDistributedCache _cache;
-    private readonly ILogger<InMemoryRepositoryCache> _logger;
+    private readonly ILogger<RedisRepositoryCache> _logger;
     
     #endregion
     
