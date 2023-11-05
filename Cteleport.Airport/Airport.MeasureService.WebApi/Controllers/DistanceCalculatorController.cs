@@ -19,6 +19,7 @@ public class DistanceCalculatorController: ControllerBase
     private readonly IIataCodeValidator _iataCodeValidator;
     private readonly IAirportCodesRepository _repository;
     private readonly IDistanceCalculator _calculator;
+    private readonly ILogger<DistanceCalculatorController> _logger;
 
     #endregion
     
@@ -27,11 +28,13 @@ public class DistanceCalculatorController: ControllerBase
     public DistanceCalculatorController(
         IIataCodeValidator iataCodeValidator,
         IAirportCodesRepository repository,
-        IDistanceCalculator calculator)
+        IDistanceCalculator calculator,
+        ILogger<DistanceCalculatorController> logger)
     {
         _iataCodeValidator = iataCodeValidator;
         _repository = repository;
         _calculator = calculator;
+        _logger = logger;
     }
     
     #endregion
@@ -54,10 +57,17 @@ public class DistanceCalculatorController: ControllerBase
             var distance = _calculator.Calculate(f.Value, t.Value);
 
             // return result
+            _logger.LogInformation("Calculated distance in miles: {Distance}", distance.Miles);
             return Ok(new { DistanceInMiles = distance.Miles });
         }
         catch (FailedToGetLocationForIataCodeException ex)
         {
+            _logger.LogWarning(
+                "Failed to calculate distance between '{FromIataCode}' and '{ToIataCode}': {Msg}",
+                from.Value,
+                to.Value,
+                ex.Message);
+            
             return BadRequest(ex.Message);
         }
     }
@@ -73,6 +83,8 @@ public class DistanceCalculatorController: ControllerBase
     [HttpGet("calculate"), MapToApiVersion(1.0)]
     public async Task<ActionResult<double>> CalculateDistanceBetweenAirports([FromQuery] string fromIataCode, [FromQuery] string toIataCode)
     {
+        _logger.LogInformation("Calculate distance between '{FromIataCode}' and '{ToIataCode}'", fromIataCode, toIataCode);
+        
         // codes
         var airportFrom = new IataCode(fromIataCode);
         var airportTo = new IataCode(toIataCode);

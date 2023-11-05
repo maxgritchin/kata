@@ -3,6 +3,8 @@ using Airport.Measure.Domain.Entities.Locations;
 using Airport.Measure.Domain.Exceptions;
 using Airport.Measure.Domain.Repositories;
 using Airport.Measure.Implementation.Repositories.Cache;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Airport.Measure.Implementation.Repositories;
 
@@ -15,10 +17,16 @@ public class CachingIataCodeRepository: IAirportCodesRepository
 
     public CachingIataCodeRepository(
         IAirportCodesRepository codesRepository,
-        IRepositoryCache cache)
+        IRepositoryCache cache): this(codesRepository, cache, NullLogger<CachingIataCodeRepository>.Instance) {}
+        
+    public CachingIataCodeRepository(
+        IAirportCodesRepository codesRepository,
+        IRepositoryCache cache,
+        ILogger<CachingIataCodeRepository> logger)
     {
         _codesRepository = codesRepository ?? throw new ArgumentNullException(nameof(codesRepository));
         _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+        _logger = logger;
     }
 
     #endregion
@@ -27,7 +35,8 @@ public class CachingIataCodeRepository: IAirportCodesRepository
     
     private readonly IAirportCodesRepository _codesRepository;
     private readonly IRepositoryCache _cache;
-    
+    private readonly ILogger<CachingIataCodeRepository> _logger;
+
     #endregion
     
     #region IAirportCodesRepository implementation
@@ -35,6 +44,8 @@ public class CachingIataCodeRepository: IAirportCodesRepository
     /// <inheritdoc />
     public async Task<LocationPoint?> GetLocationAsync(IataCode code)
     {
+        _logger.LogDebug("Get Location for '{IataCode}' from Caching Repository", code.Value);
+        
         // validate 
         if (code == null)
             throw new InvalidIataCode("IATA code is not specified");
@@ -42,7 +53,15 @@ public class CachingIataCodeRepository: IAirportCodesRepository
         // trying to get from the cache
         var location = await _cache.GetAsync(code);
         if (location != null)
+        {
+            _logger.LogDebug(
+                "Cache contains Loactions for '{IataCode}'. Data: '{Latitude}', '{Longitude}'", 
+                code.Value, 
+                location.Value.Latitude, 
+                location.Value.Longitude);
+            
             return location.Value;
+        }
         
         // get from base repository 
         location = await _codesRepository.GetLocationAsync(code);
@@ -50,6 +69,12 @@ public class CachingIataCodeRepository: IAirportCodesRepository
         // put to the cache 
         if (location != null)
         {
+            _logger.LogDebug(
+                "Update record in Cache for '{IataCode}'. Data: '{Latitude}', '{Longitude}'", 
+                code.Value, 
+                location.Value.Latitude, 
+                location.Value.Longitude);
+            
             await _cache.PutAsync(code, location.Value);
         }
         

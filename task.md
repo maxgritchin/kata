@@ -18,20 +18,20 @@ It's allowed to use any 3-rd party components/frameworks. Solution has to be bas
 # Process 
 
 -> User makes a request with two codes 
-    [ ] codes in URL parameters 
-    [ ] validate parameters 
-    [ ] get data from the codes repo
+    [x] codes in URL parameters 
+    [x] validate parameters 
+    [x] get data from the codes repo
         [x] check cache if exists for pair 
             [ ] how to cache a pair 1 2 == 2 1
         [x] get from URL repo
         [ ] redis
         [x] in-memory
     [x] calculate distance 
-    [ ] return proper status codes
-    [ ] return value or failed result 
+    [x] return proper status codes
+    [x] return value or failed result 
 
--> Logger 
--> Redis as cache   
+-> Logger [x]
+-> Redis as cache [-]  
 -> Docker compose with nginx as LB to scale services  
 -> Write Readme 
 -> Final refactoring
@@ -47,8 +47,11 @@ It's allowed to use any 3-rd party components/frameworks. Solution has to be bas
     2. redis to have reached IATA codes 
     3. Event - Driven 
 
+used site to get numbers for test of correctness 
+https://www.airportdistancecalculator.com/flight-dme-to-ams.html
 
 # json  
+{"iata":"AMS","name":"Amsterdam","city":"Amsterdam","city_iata":"AMS","country":"Netherlands","country_iata":"NL","location":{"lon":4.763385,"lat":52.309069},"rating":3,"hubs":7,"timezone_region_name":"Europe/Amsterdam","type":"airport"}
 
 {"detail":"Airport not found"}%
 

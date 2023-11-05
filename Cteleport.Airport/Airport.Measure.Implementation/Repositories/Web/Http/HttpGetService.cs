@@ -1,3 +1,6 @@
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+
 namespace Airport.Measure.Implementation.Repositories.Web.Http;
 
 /// <summary>
@@ -11,18 +14,29 @@ public class HttpGetService: IHttpGet
     /// .ctor
     /// </summary>
     /// <param name="baseUrl">Base URL</param>
-        public HttpGetService(string baseUrl)
-        {
-            // validate
-            if (string.IsNullOrWhiteSpace(baseUrl))
-                throw new AggregateException("Base URL for IATA repository cannot be empty");
+    public HttpGetService(string baseUrl): this(baseUrl, NullLogger<HttpGetService>.Instance) {}
+    
+    /// <summary>
+    /// .ctor
+    /// </summary>
+    /// <param name="baseUrl">Base URL</param>
+    public HttpGetService(
+        string baseUrl,
+        ILogger<HttpGetService> logger)
+    {
+        // validate
+        if (string.IsNullOrWhiteSpace(baseUrl))
+            throw new AggregateException("Base URL for IATA repository cannot be empty");
+
+        // init
+        if (!baseUrl.EndsWith("/"))
+            baseUrl += "/";
             
-            // init
-            if (!baseUrl.EndsWith("/"))
-                baseUrl += "/";
-            
-            baseUri = new Uri(baseUrl);
-        }
+        baseUri = new Uri(baseUrl);
+        _logger = logger;
+
+        _logger.LogDebug("Base URL: {URL}", baseUrl);
+    }
     
     #endregion
     
@@ -30,6 +44,7 @@ public class HttpGetService: IHttpGet
 
     private readonly HttpClient _http = new HttpClient();
     private readonly Uri baseUri;
+    private readonly ILogger<HttpGetService> _logger;
 
     #endregion
     
