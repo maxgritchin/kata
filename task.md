@@ -29,6 +29,7 @@ It's allowed to use any 3-rd party components/frameworks. Solution has to be bas
     [x] calculate distance 
     [x] return proper status codes
     [x] return value or failed result 
+    [-] shows east and west path 
 
 -> Logger [x]
 -> Redis as cache [-]  

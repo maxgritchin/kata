@@ -53,6 +53,7 @@ public class RedisRepositoryCache: IRepositoryCache
                 _logger.LogInformation("Cache does not contain info for '{IataCode}'", key);
                 return null;
             }
+            _logger.LogTrace("JSON from Radis cache: {Json}", jsonContentOfLocation);
                 
             // parse 
             var location = JsonSerializer.Deserialize<LocationPoint>(jsonContentOfLocation);

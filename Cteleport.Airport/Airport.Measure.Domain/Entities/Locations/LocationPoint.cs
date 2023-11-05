@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Airport.Measure.Domain.Entities.Locations;
 
 /// <summary>
@@ -8,10 +10,11 @@ public struct LocationPoint
     public double Longitude { get; }
     public double Latitude { get; }
     
-    public LocationPoint(double lon, double lat)
+    [JsonConstructor]
+    public LocationPoint(double longitude, double latitude)
     {
-        Longitude = lon;
-        Latitude = lat;
+        Longitude = longitude;
+        Latitude = latitude;
     }
     
     #region Equity
