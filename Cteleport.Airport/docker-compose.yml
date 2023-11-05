@@ -1,27 +1,19 @@
 version: '3.7'
 
 services:
-  webapi1:
+  webapi:
     build:
       context: .
       dockerfile: ./Airport.MeasureService.WebApi/Dockerfile
     ports:
       - "8081:80"
+    environment:
+      - ConnectionStrings__Redis=redis:6379 
+      - ASPNETCORE_ENVIRONMENT=Development    
     networks:
       - cteleport
     depends_on:
       - redis
-
-  # webapi2:
-  #   build:
-  #     context: .
-  #     dockerfile: ./Airport.MeasureService.WebApi/Dockerfile
-  #   ports:
-  #     - "8082:80"
-  #   networks:
-  #     - cteleport
-  #   depends_on:
-  #     - redis
 
   redis:
     image: redis:latest

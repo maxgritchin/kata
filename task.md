@@ -32,12 +32,10 @@ It's allowed to use any 3-rd party components/frameworks. Solution has to be bas
     [-] shows east and west path 
 
 -> Logger [x]
--> Redis as cache [-]  
--> Docker compose with nginx as LB to scale services  
+-> Redis as cache [x]  
+-> Docker compose with nginx as LB to scale services  [x]
 -> Write Readme 
 -> Final refactoring
-
-[?] the path could be in both ways around the glob. Choose smalest?  
 
 # What DONE 
 
