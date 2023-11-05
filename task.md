@@ -14,45 +14,69 @@ GET https://places-dev.cteleport.com/airports/AMS HTTP/1.1
 
 It's allowed to use any 3-rd party components/frameworks. Solution has to be based on dotnet core 5.0+
 
+# How to use 
 
-# Process 
+```shell
+curl -i -X GET "http://localhost:8081/api/v1/distance/calculate?from=lhr&to=ams"
+```
 
--> User makes a request with two codes 
-    [x] codes in URL parameters 
-    [x] validate parameters 
-    [x] get data from the codes repo
-        [x] check cache if exists for pair 
-            [ ] how to cache a pair 1 2 == 2 1
-        [x] get from URL repo
-        [ ] redis
-        [x] in-memory
-    [x] calculate distance 
-    [x] return proper status codes
-    [x] return value or failed result 
-    [-] shows east and west path 
+# How To Build 
 
--> Logger [x]
--> Redis as cache [x]  
--> Docker compose with nginx as LB to scale services  [x]
--> Write Readme 
--> Final refactoring
+```shell 
+docker-compose build 
+docker-compose up
+```
 
-# What DONE 
+# Created Features 
 
-[x] Added API versioning. TODO example 
-[ ] tell that Haversine formula used but also has another algorithms such as Vincenty formula
-[ ] explain another approaches when : 
-    1. over 12,000 IATA (International Air Transport Association) airport codes in use worldwide may be cached in DB and each service read it when starts (NO REDIS)
-    2. redis to have reached IATA codes 
-    3. Event - Driven 
+## REST API 
 
-used site to get numbers for test of correctness 
-https://www.airportdistancecalculator.com/flight-dme-to-ams.html
+### Features 
 
-# json  
-{"iata":"AMS","name":"Amsterdam","city":"Amsterdam","city_iata":"AMS","country":"Netherlands","country_iata":"NL","location":{"lon":4.763385,"lat":52.309069},"rating":3,"hubs":7,"timezone_region_name":"Europe/Amsterdam","type":"airport"}
+Endpoint `distance/calculate` 
 
-{"detail":"Airport not found"}%
+The endpoint contaains two parameters that setup via query params: 
+    - from
+    - to 
 
-[{'type': 'string_pattern_mismatch', 'loc': ('path', 'code'), 'msg': "String should match pattern '^[A-Z]{3}$'", 'input': 'AMSS', 'ctx': {'pattern': '^[A-Z]{3}$'}, 'url': 'https://errors.pydantic.dev/2.4/v/string_pattern_mismatch'}]%
+The `from` parameter is a IATA code of first airport. 
+The `to` parameter is a IATA code of second airport.
+
+### Version 
+
+The endpoint contains versioning feature. Versioning implemented via setup version in the query. 
+
+### Distance Calculator 
+
+The algorithm of calculation distance between airport has taken from https://en.wikipedia.org/wiki/Haversine_formula
+Of course, it is possible to switch to another algo if implemented one. 
+
+https://www.airportdistancecalculator.com to test that the number is correct. 
+
+### Caching 
+
+To boost calculation and reduce http requests, caching approach is used. 
+There are two possible caching approaches implemented: 
+    - InMemory 
+    - Redis 
+
+When use InMemory, then each service contains it is own cache. This is not scalable well. 
+When use Redis, it is a distrebuted cache. Several services depends on the cache.
+
+In the current implementatio, only Location coordinates is cached. 
+
+# What Might Be Done Next 
+
+## Features 
+
+- Cache not only the location coordinates, but result of calculation of the distance;
+- Calculate distance from West and East path from the first airport;
+- Add LB and run several instances of the web api app  (nginx to make round-robbin)
+
+## Refactoring 
+
+There are 12_000 IATA codes approximately. 
+Run a cron job to fetch data from the provided url. Persist data to internal storage. When up the web api app, fill the inmemory cache from the persistence storage. 
+HashMap(Dictionary) would take approximatelly 300kb in memory. The only delay when service start to fill the cache. 
+
 
